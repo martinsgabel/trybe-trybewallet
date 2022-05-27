@@ -14,14 +14,20 @@ class Login extends React.Component {
   }
 
   handleChange = ({ target }) => {
+    const { email, password } = this.state;
     this.setState({
       [target.name]: target.value,
     });
-    this.disablingButton();
+    if (target.name === 'email') {
+      this.disablingButton(target.value, password);
+    }
+    if (target.name === 'password') {
+      this.disablingButton(email, target.value);
+    }
   }
 
-  disablingButton = () => {
-    const validLogs = this.validLogs();
+  disablingButton = (email, password) => {
+    const validLogs = this.validLogs(email, password);
     if (!validLogs) {
       this.setState({
         disabled: true,
@@ -33,11 +39,11 @@ class Login extends React.Component {
     }
   }
 
-  validLogs = () => {
-    const { email, password } = this.state;
+  validLogs = (email, password) => {
+    console.log(password);
     const six = 5;
     const format = /\S+@\S+\.\S+/;
-    if (format.test(email) && password.length >= six) return true;
+    if (format.test(email) && password.length > six) { return true; }
     return false;
   }
 

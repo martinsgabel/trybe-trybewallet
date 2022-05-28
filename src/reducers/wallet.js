@@ -4,6 +4,7 @@ const GET_CURRENCIES = 'GET_CURRENCIES';
 const WALLET_INITIAL_STATE = {
   currencies: [],
   expenses: [],
+  rates: {},
 };
 
 const wallet = (state = WALLET_INITIAL_STATE, action) => {

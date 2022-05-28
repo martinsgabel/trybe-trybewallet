@@ -1,7 +1,9 @@
 // Coloque aqui suas actions
 import currenciesAPI from '../API/currenciesAPI';
+import ratesAPI from '../API/ratesAPI';
 
 const GET_CURRENCIES = 'GET_CURRENCIES';
+const GET_RATES = 'GET_RATES';
 const SET_USER_INFO = 'SET_USER_INFO';
 const SET_EXPENSES = 'SET_EXPENSES';
 
@@ -18,7 +20,7 @@ export const updateExpenses = (expenses) => ({
   payload: expenses,
 });
 
-// FETTCHING currencies
+// FETTCHING currencies list
 const getCurrencies = (currencies) => ({
   type: GET_CURRENCIES,
   payload: currencies,
@@ -28,5 +30,18 @@ export function fetchCurrencies() {
   return async (dispatch) => {
     const resultAPI = await currenciesAPI();
     return dispatch(getCurrencies(resultAPI));
+  };
+}
+
+// Cotação do momento
+const getRates = (rates) => ({
+  type: GET_RATES,
+  payload: rates,
+});
+
+export function fetchRates() {
+  return async (dispatch) => {
+    const resultAPI = await ratesAPI();
+    return dispatch(getRates(resultAPI));
   };
 }

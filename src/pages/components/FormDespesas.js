@@ -6,6 +6,7 @@ class FormDespesas extends React.Component {
   constructor() {
     super();
     this.state = {
+      id: 0,
       valor: 0,
       description: '',
       paymentMethod: '',
@@ -13,6 +14,33 @@ class FormDespesas extends React.Component {
       tag: '',
     };
   }
+
+  editExpense = () => {
+    const { id, valor, description, paymentMethod, currency, tag } = this.state;
+    const { fetchRatesProps } = this.props;
+    const expense = {
+      id,
+      value: valor,
+      description,
+      paymentMethod,
+      currency,
+      tag,
+      exchangeRates: fetchRatesProps(),
+    };
+
+    this.setState({
+      id: id + 1,
+    });
+
+    return expense;
+  }
+
+  // montar objeto com tudo necessário
+  // fazer fetchAPI dentro dele
+  // alterar valor de string pra numero
+  // fazer dispatch pra guardar no array de Expenses
+
+  // fazer um novo reducer colocando as despesas dentro, usando a hof reduce para consegui o valor total
 
   handleChange({ target }) {
     this.setState({
@@ -32,7 +60,7 @@ class FormDespesas extends React.Component {
             name="valor"
             placeholder="valor"
             value={ valor }
-            onChange={ this.handleChange }
+            onChange={ (e) => this.handleChange(e) }
           />
           <input
             data-testid="description-input"
@@ -40,23 +68,24 @@ class FormDespesas extends React.Component {
             name="description"
             placeholder="description"
             value={ description }
-            onChange={ this.handleChange }
+            onChange={ (e) => this.handleChange(e) }
           />
           <label
-            htmlFor="currencies"
+            htmlFor="currency"
           >
             Moeda
             <select
               data-testid="currency-input"
-              id="currencies"
-              name="currencies"
+              id="currency"
+              name="currency"
               value={ currency }
-              onChange={ this.handleChange }
+              onChange={ (e) => this.handleChange(e) }
             >
               { currencies.map((curr, index) => (
                 <option
                   key={ index }
                   value={ curr }
+                  name="currency"
                 >
                   { curr }
                 </option>
@@ -67,31 +96,35 @@ class FormDespesas extends React.Component {
             <p>Método de Pagamento</p>
             <select
               data-testid="method-input"
+              name="paymentMethod"
               value={ paymentMethod }
-              onChange={ this.handleChange }
+              onChange={ (e) => this.handleChange(e) }
             >
-              <option value="Dinheiro">Dinheiro</option>
-              <option value="Crédito">Cartão de crédito</option>
-              <option value="Débito">Cartão de débito</option>
+              <option value="Dinheiro" name="paymentMethod">Dinheiro</option>
+              <option value="Crédito" name="paymentMethod">Cartão de crédito</option>
+              <option value="Débito" name="paymentMethod">Cartão de débito</option>
             </select>
           </div>
           <div>
             <p>Categoria</p>
             <select
               data-testid="tag-input"
-              name="categoria"
+              name="tag"
               value={ tag }
-              onChange={ this.handleChange }
+              onChange={ (e) => this.handleChange(e) }
             >
-              <option value="Alimentação">Alimentação</option>
-              <option value="Lazer">Lazer</option>
-              <option value="Trabalho">Trabalho</option>
-              <option value="Transporte">Transporte</option>
-              <option value="Saúde">Saúde</option>
+              <option value="Alimentação" name="tag">Alimentação</option>
+              <option value="Lazer" name="tag">Lazer</option>
+              <option value="Trabalho" name="tag">Trabalho</option>
+              <option value="Transporte" name="tag">Transporte</option>
+              <option value="Saúde" name="tag">Saúde</option>
             </select>
           </div>
           <div>
-            <button type="button">
+            <button
+              type="button"
+              onClick={ this.saveExpense() }
+            >
               Adicionar despesa
             </button>
           </div>
@@ -120,8 +153,13 @@ const mapStateToProps = (state) => ({
   currencies: state.wallet.currencies,
 });
 
+const mapDispatchToProps = (dispatch) => ({
+  saveExpense: () => dispatch(updateExpenses()),
+  fetchRatesProps: () => dispatch(fetchRates()),
+});
+
 FormDespesas.propTypes = {
   currencies: propTypes.arrayOf(propTypes.string),
 }.isRequired;
 
-export default connect(mapStateToProps)(FormDespesas);
+export default connect(mapStateToProps, mapDispatchToProps)(FormDespesas);

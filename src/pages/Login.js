@@ -40,7 +40,6 @@ class Login extends React.Component {
   }
 
   validLogs = (email, password) => {
-    console.log(password);
     const six = 5;
     const format = /\S+@\S+\.\S+/;
     if (format.test(email) && password.length > six) { return true; }

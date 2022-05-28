@@ -1,16 +1,38 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import propTypes from 'prop-types';
 
 class FormDespesas extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      valor: 0,
+      description: '',
+      paymentMethod: '',
+      currency: '',
+      tag: '',
+    };
+  }
+
+  handleChange({ target }) {
+    this.setState({
+      [target.name]: target.value,
+    });
+  }
+
   render() {
+    const { currencies } = this.props;
+    const { valor, description, paymentMethod, currency, tag } = this.state;
     return (
       <div className="form-despesas">
-        {/* <form>
+        <form>
           <input
             data-testid="value-input"
             type="number"
             name="valor"
             placeholder="valor"
             value={ valor }
+            onChange={ this.handleChange }
           />
           <input
             data-testid="description-input"
@@ -18,6 +40,7 @@ class FormDespesas extends React.Component {
             name="description"
             placeholder="description"
             value={ description }
+            onChange={ this.handleChange }
           />
           <label
             htmlFor="currencies"
@@ -28,26 +51,37 @@ class FormDespesas extends React.Component {
               id="currencies"
               name="currencies"
               value={ currency }
+              onChange={ this.handleChange }
             >
-              Currencies
+              { currencies.map((curr, index) => (
+                <option
+                  key={ index }
+                  value={ curr }
+                >
+                  { curr }
+                </option>
+              )) }
             </select>
           </label>
           <div>
             <p>Método de Pagamento</p>
             <select
               data-testid="method-input"
-              value={ metodo }
+              value={ paymentMethod }
+              onChange={ this.handleChange }
             >
               <option value="Dinheiro">Dinheiro</option>
-              <option value="Crédito">Cartão de Crédito</option>
-              <option value="Débito">Cartão de Débito</option>
+              <option value="Crédito">Cartão de crédito</option>
+              <option value="Débito">Cartão de débito</option>
             </select>
           </div>
           <div>
             <p>Categoria</p>
             <select
               data-testid="tag-input"
-              value={ categoria }
+              name="categoria"
+              value={ tag }
+              onChange={ this.handleChange }
             >
               <option value="Alimentação">Alimentação</option>
               <option value="Lazer">Lazer</option>
@@ -76,10 +110,18 @@ class FormDespesas extends React.Component {
               <th>Editar/Excluir</th>
             </tr>
           </thead>
-        </table> */}
+        </table>
       </div>
     );
   }
 }
 
-export default FormDespesas;
+const mapStateToProps = (state) => ({
+  currencies: state.wallet.currencies,
+});
+
+FormDespesas.propTypes = {
+  currencies: propTypes.arrayOf(propTypes.string),
+}.isRequired;
+
+export default connect(mapStateToProps)(FormDespesas);

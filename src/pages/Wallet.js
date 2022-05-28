@@ -16,7 +16,6 @@ class Wallet extends React.Component {
       <div>
         <Header />
         <FormDespesas />
-        TrybeWallet
       </div>
     );
   }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import propTypes from 'prop-types';
+import { fetchRates, updateExpenses } from '../../actions';
 
 class FormDespesas extends React.Component {
   constructor() {
@@ -22,24 +23,25 @@ class FormDespesas extends React.Component {
       id,
       value: valor,
       description,
-      paymentMethod,
       currency,
+      method: paymentMethod,
       tag,
       exchangeRates: fetchRatesProps(),
     };
 
-    this.setState({
-      id: id + 1,
-    });
+    this.saveObjectInExpenses(expense);
+  }
 
-    return expense;
+  saveObjectInExpenses = (expense) => {
+    const { saveExpense } = this.props;
+    saveExpense(expense);
   }
 
   // montar objeto com tudo necessário
   // fazer fetchAPI dentro dele
-  // alterar valor de string pra numero
   // fazer dispatch pra guardar no array de Expenses
 
+  // não consigo incrementar o ID
   // fazer um novo reducer colocando as despesas dentro, usando a hof reduce para consegui o valor total
 
   handleChange({ target }) {
@@ -123,7 +125,7 @@ class FormDespesas extends React.Component {
           <div>
             <button
               type="button"
-              onClick={ this.saveExpense() }
+              onClick={ this.editExpense() }
             >
               Adicionar despesa
             </button>
@@ -154,7 +156,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  saveExpense: () => dispatch(updateExpenses()),
+  saveExpense: (expense) => dispatch(updateExpenses(expense)),
   fetchRatesProps: () => dispatch(fetchRates()),
 });
 

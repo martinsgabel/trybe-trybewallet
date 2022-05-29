@@ -15,9 +15,9 @@ export const saveEmail = (email) => ({
 });
 
 // ADICIONAR/REMOVER gasto
-export const updateExpenses = (expenses) => ({
+export const updateExpenses = (expense) => ({
   type: SET_EXPENSES,
-  payload: expenses,
+  payload: expense,
 });
 
 // FETTCHING currencies list

@@ -32,6 +32,34 @@ class FormDespesas extends React.Component {
     this.saveObjectInExpenses(expense);
   }
 
+  mappingExpenses = () => {
+    const { expenses } = this.props;
+    if (expenses.length === 0) {
+      return (<h1>Nenhuma Despesa</h1>);
+    }
+    return expenses.map((exp) => (
+      <tr
+        key={ exp.id }
+      >
+        <td>{ exp.description }</td>
+        <td>{ exp.tag }</td>
+        <td>{ exp.method }</td>
+        <td>{ Number(exp.value).toFixed(2) }</td>
+        <td>{ exp.currency }</td>
+        <td>{ exp.exchangeRates[exp.currency].name }</td>
+        <td>{ Number(exp.exchangeRates[exp.currency].ask).toFixed(2) }</td>
+        <td>
+          { (Number(exp.exchangeRates[exp.currency].ask) * Number(exp.value)).toFixed(2) }
+        </td>
+        <td>Real</td>
+        <td>
+          <button type="button">Editar</button>
+          <button type="button">Excluir</button>
+        </td>
+      </tr>
+    ));
+  }
+
   saveObjectInExpenses = (expense) => {
     const { saveExpense } = this.props;
     saveExpense(expense);
@@ -42,22 +70,8 @@ class FormDespesas extends React.Component {
       paymentMethod: '',
       currency: '',
       tag: '',
-      // total: 0,
     }));
-    // this.addToTotal();
   }
-
-  // addToTotal = () => {
-  //   const { expenses, updateTotalProps } = this.props;
-  //   expenses.forEach((exp) => {
-  //     this.setState((prevTotal) => ({
-  //       total: prevTotal.total + exp.value,
-  //     }));
-  //   });
-
-  //   const { total } = this.state;
-  //   updateTotalProps(total);
-  // }
 
   handleChange({ target }) {
     this.setState({
@@ -159,10 +173,12 @@ class FormDespesas extends React.Component {
               <th>Valor</th>
               <th>Moeda</th>
               <th>Câmbio utilizado</th>
+              <th>Valor de Câmbio</th>
               <th>Valor convertido</th>
               <th>Moeda de conversão</th>
               <th>Editar/Excluir</th>
             </tr>
+            { this.mappingExpenses() }
           </thead>
         </table>
       </div>
@@ -172,12 +188,11 @@ class FormDespesas extends React.Component {
 
 const mapStateToProps = (state) => ({
   currencies: state.wallet.currencies,
-  expenses: state.wallet.currencies,
+  expenses: state.wallet.expenses,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   saveExpense: (expense) => dispatch(updateExpenses(expense)),
-  // updateTotalProps: (total) => dispatch(updateTotal(total)),
 });
 
 FormDespesas.propTypes = {

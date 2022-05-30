@@ -1,6 +1,4 @@
 // Coloque aqui suas actions
-import currenciesAPI from '../API/currenciesAPI';
-
 const GET_CURRENCIES = 'GET_CURRENCIES';
 const SET_USER_INFO = 'SET_USER_INFO';
 const SET_EXPENSES = 'SET_EXPENSES';
@@ -30,8 +28,16 @@ const getCurrencies = (currencies) => ({
 });
 
 export function fetchCurrencies() {
+  const URL = 'https://economia.awesomeapi.com.br/json/all';
+
   return async (dispatch) => {
-    const resultAPI = await currenciesAPI();
-    return dispatch(getCurrencies(resultAPI));
+    try {
+      const response = await fetch(URL);
+      const data = await response.json();
+      const updatedData = Object.keys(data).filter((currency) => currency !== 'USDT');
+      dispatch(getCurrencies(updatedData));
+    } catch (error) {
+      console.log(error);
+    }
   };
 }

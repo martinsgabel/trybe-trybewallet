@@ -3,19 +3,10 @@ import { connect } from 'react-redux';
 import propTypes from 'prop-types';
 
 class Header extends React.Component {
-  // constructor() {
-  //   super();
-
-  //   this.state = {
-  //     total: 0,
-  //   };
-  // }
-
   addToTotal = () => {
     const { expenses } = this.props;
-    console.log(expenses);
-    if (expenses.length === 0) {
-      return (<span>0</span>);
+    if (!expenses) {
+      return (0);
     }
     const totalReduce = expenses.reduce((acc, num) => {
       const total = Number(num.exchangeRates[num.currency].ask) * Number(num.value);
@@ -25,8 +16,6 @@ class Header extends React.Component {
       totalReduce.toFixed(2)
     );
   }
-
-  // valor e multiplicar pelo ask
 
   render() {
     const { email } = this.props;

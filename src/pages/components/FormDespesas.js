@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import propTypes from 'prop-types';
-import { fetchRates, updateExpenses } from '../../actions';
+import { updateExpenses } from '../../actions';
+import ratesAPI from '../../API/ratesAPI';
 
 class FormDespesas extends React.Component {
   constructor() {
@@ -16,9 +17,8 @@ class FormDespesas extends React.Component {
     };
   }
 
-  editExpense = () => {
+  editExpense = async () => {
     const { id, valor, description, paymentMethod, currency, tag } = this.state;
-    const { fetchRatesProps } = this.props;
     const expense = {
       id,
       value: valor,
@@ -26,7 +26,7 @@ class FormDespesas extends React.Component {
       currency,
       method: paymentMethod,
       tag,
-      exchangeRates: fetchRatesProps(),
+      exchangeRates: await ratesAPI(),
     };
 
     this.saveObjectInExpenses(expense);
@@ -35,14 +35,29 @@ class FormDespesas extends React.Component {
   saveObjectInExpenses = (expense) => {
     const { saveExpense } = this.props;
     saveExpense(expense);
+    this.setState((prev) => ({
+      id: prev.id + 1,
+      valor: 0,
+      description: '',
+      paymentMethod: '',
+      currency: '',
+      tag: '',
+      // total: 0,
+    }));
+    // this.addToTotal();
   }
 
-  // montar objeto com tudo necessário
-  // fazer fetchAPI dentro dele
-  // fazer dispatch pra guardar no array de Expenses
+  // addToTotal = () => {
+  //   const { expenses, updateTotalProps } = this.props;
+  //   expenses.forEach((exp) => {
+  //     this.setState((prevTotal) => ({
+  //       total: prevTotal.total + exp.value,
+  //     }));
+  //   });
 
-  // não consigo incrementar o ID
-  // fazer um novo reducer colocando as despesas dentro, usando a hof reduce para consegui o valor total
+  //   const { total } = this.state;
+  //   updateTotalProps(total);
+  // }
 
   handleChange({ target }) {
     this.setState({
@@ -103,8 +118,12 @@ class FormDespesas extends React.Component {
               onChange={ (e) => this.handleChange(e) }
             >
               <option value="Dinheiro" name="paymentMethod">Dinheiro</option>
-              <option value="Crédito" name="paymentMethod">Cartão de crédito</option>
-              <option value="Débito" name="paymentMethod">Cartão de débito</option>
+              <option value="Cartão de crédito" name="paymentMethod">
+                Cartão de crédito
+              </option>
+              <option value="Cartão de débito" name="paymentMethod">
+                Cartão de débito
+              </option>
             </select>
           </div>
           <div>
@@ -125,7 +144,7 @@ class FormDespesas extends React.Component {
           <div>
             <button
               type="button"
-              onClick={ this.editExpense() }
+              onClick={ () => this.editExpense() }
             >
               Adicionar despesa
             </button>
@@ -153,15 +172,17 @@ class FormDespesas extends React.Component {
 
 const mapStateToProps = (state) => ({
   currencies: state.wallet.currencies,
+  expenses: state.wallet.currencies,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   saveExpense: (expense) => dispatch(updateExpenses(expense)),
-  fetchRatesProps: () => dispatch(fetchRates()),
+  // updateTotalProps: (total) => dispatch(updateTotal(total)),
 });
 
 FormDespesas.propTypes = {
   currencies: propTypes.arrayOf(propTypes.string),
+  saveExpense: propTypes.func,
 }.isRequired;
 
 export default connect(mapStateToProps, mapDispatchToProps)(FormDespesas);
